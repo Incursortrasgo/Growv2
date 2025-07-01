@@ -4,6 +4,10 @@ import ahtx0
 from machine import I2C, Pin
 from guev import pagina_guev
 
+# Inicialización de I2C y sensor
+i2c = I2C(1, scl=Pin(19), sda=Pin(18), freq=400000)
+sensor = ahtx0.AHT10(i2c)
+
 def hora_a_segundos(hora_str):
     try:
         h, m = map(int, hora_str.split(":"))
@@ -84,8 +88,6 @@ def manejar_peticion(conn, addr, temperatura, humedad, hora_on, hora_off):
     return hora_on, hora_off
 
 def leer_sensor():
-    i2c = I2C(1, scl=Pin(19), sda=Pin(18), freq=400000)
-    sensor = ahtx0.AHT10(i2c)
     try:
         temperatura = sensor.temperature
         humedad = sensor.relative_humidity
