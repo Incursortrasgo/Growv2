@@ -17,6 +17,7 @@ from utils import (
 hora_on = None
 hora_off = None
 pin_wifi_ok = machine.Pin(2, machine.Pin.OUT, machine.Pin.PULL_DOWN)
+gpio0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP) # si se cae se pone en modo flashing
 
 def main():
     global hora_on, hora_off

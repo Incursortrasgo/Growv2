@@ -52,6 +52,7 @@ def pagina_guev():
 
     <div class="card">
       <p class="dato" id="hora-actual">Hora actual: --:--</p>
+      <p class="dato" id="estado">Estado: --</p>
       <label>Hora de encendido:</label>
       <input type="time" id="hora-on">
       <label>Hora de apagado:</label>
@@ -60,6 +61,25 @@ def pagina_guev():
       <button onclick="enviarHoras()">Guardar</button>
     </div>
 
+    <div id="toast" style="
+      visibility: hidden;
+      min-width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 4px;
+      padding: 8px 12px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.5s, visibility 0.5s;
+    "></div>
+
+
     <script>
       function actualizarDatos() {
         fetch('/datos')
@@ -67,6 +87,7 @@ def pagina_guev():
           .then(data => {
             document.getElementById('temp').innerText = 'Temperatura: ' + data.temp + ' °C';
             document.getElementById('hume').innerText = 'Humedad: ' + data.hume + ' %';
+            document.getElementById('estado').innerText = 'Estado: ' + data.estado;
           });
       }
 
@@ -84,6 +105,10 @@ def pagina_guev():
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ encender: on, apagar: off })
+        }).then(() => {
+    	  toast("Configuración guardada correctamente");
+        }).catch(() => {
+    	  toast("Error al guardar configuración");
         });
       }
 
@@ -95,6 +120,19 @@ def pagina_guev():
             if (data.hora_off) document.getElementById("hora-off").value = data.hora_off;
           });
       }
+
+      function toast(mensaje, color = "#333") {
+        const x = document.getElementById("toast");
+          x.textContent = mensaje;
+          x.style.backgroundColor = color;
+          x.style.visibility = "visible";
+          x.style.opacity = "1";
+          setTimeout(() => {
+            x.style.opacity = "0";
+            x.style.visibility = "hidden";
+          }, 3000);
+      }
+
 
       actualizarDatos();
       actualizarHoraActual();

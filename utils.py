@@ -63,7 +63,7 @@ def manejar_peticion(conn, addr, temperatura, humedad, hora_on, hora_off):
         conn.sendall(b'OK')
 
     elif 'GET /datos' in request_str:
-        estado_led = pin_wifi_ok.value()  # 1 o 0
+        estado_led = pin_wifi_ok.value()
         datos = ujson.dumps({
         "temp": temperatura,
         "hume": humedad,
