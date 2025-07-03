@@ -52,13 +52,13 @@ def pagina_guev():
 
     <div class="card">
       <p class="dato" id="hora-actual">Hora actual: --:--</p>
-      <p class="dato" id="estado">Estado: --</p>
+      <p class="dato" id="estado">Estado: <span id="estado-valor">--</span></p>
       <label>Hora de encendido:</label>
       <input type="time" id="hora-on">
       <label>Hora de apagado:</label>
       <input type="time" id="hora-off">
       <br/><br/>
-      <button onclick="enviarHoras()">Guardar</button>
+      <button class="button primary" onclick="enviarHoras()">Guardar</button>
     </div>
 
     <div id="toast" style="
@@ -87,7 +87,10 @@ def pagina_guev():
           .then(data => {
             document.getElementById('temp').innerText = 'Temperatura: ' + data.temp + ' °C';
             document.getElementById('hume').innerText = 'Humedad: ' + data.hume + ' %';
-            document.getElementById('estado').innerText = 'Estado: ' + data.estado;
+
+            const estadoElem = document.getElementById('estado-valor');
+            estadoElem.innerText = data.estado;
+            estadoElem.style.color = data.estado === 'Encendido' ? 'lime' : 'tomato';
           });
       }
 
