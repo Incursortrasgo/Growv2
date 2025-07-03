@@ -1,12 +1,14 @@
 import time
 import ujson
 import ahtx0
+import machine
 from machine import I2C, Pin
 from guev import pagina_guev
 
 # Inicialización de I2C y sensor
 i2c = I2C(1, scl=Pin(19), sda=Pin(18), freq=400000)
 sensor = ahtx0.AHT10(i2c)
+pin_wifi_ok = machine.Pin(2, machine.Pin.OUT, machine.Pin.PULL_DOWN)
 
 def hora_a_segundos(hora_str):
     try:
@@ -61,10 +63,15 @@ def manejar_peticion(conn, addr, temperatura, humedad, hora_on, hora_off):
         conn.sendall(b'OK')
 
     elif 'GET /datos' in request_str:
-        datos = ujson.dumps({"temp": temperatura, "hume": humedad})
-        conn.send('HTTP/1.1 200 OK\n')
-        conn.send('Content-Type: application/json\n')
-        conn.send('Connection: close\n\n')
+        estado_led = pin_wifi_ok.value()  # 1 o 0
+        datos = ujson.dumps({
+        "temp": temperatura,
+        "hume": humedad,
+        "estado": "Encendido" if estado_led else "Apagado"
+        })
+        conn.send('HTTP/1.1 200 OK\r\n')
+        conn.send('Content-Type: application/json\r\n')
+        conn.send('Connection: close\r\n\r\n')
         conn.sendall(datos)
 
     elif 'GET /config' in request_str:
