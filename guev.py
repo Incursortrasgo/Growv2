@@ -40,17 +40,24 @@ def pagina_guev():
         display: block;
         margin: 10px 0 5px;
       }
+      input[type="time"] {
+        width: 50%;
+        display: block;
+        margin: 0 auto 10px auto;
+      }
     </style>
   </head>
   <body class="dark">
     <h1 class="titulo">GrowBox</h1>
 
     <div class="card">
+      <h2 class="dato">Datos del ambiente</h2>
       <p id="temp" class="dato">Temperatura: -- °C</p>
       <p id="hume" class="dato">Humedad: -- %</p>
     </div>
 
     <div class="card">
+      <h2 class="dato">Control de la Iluminación</h2>
       <p class="dato" id="hora-actual">Hora actual: --:--</p>
       <p class="dato" id="estado">Estado: <span id="estado-valor">--</span></p>
       <label>Hora de encendido:</label>
