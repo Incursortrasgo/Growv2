@@ -43,11 +43,15 @@ def pagina_guev(nombre="GrowBox"):
         width: 70%;
         display: block;
         margin: 0 auto 10px auto;
+        text-align: center;
       }}
     </style>
   </head>
   <body class="dark">
+
+    <div class="card">
     <h1 class="titulo" id="nombre-growbox">{nombre}</h1>
+    </div>
 
     <div class="card">
       <h2 class="dato">Datos del ambiente</h2>
