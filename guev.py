@@ -48,8 +48,6 @@ def pagina_guev(nombre="GrowBox"):
   </head>
   <body class="dark">
     <h1 class="titulo" id="nombre-growbox">{nombre}</h1>
-    <label>Nombre del sistema:</label>
-    <input type="text" id="nombre" placeholder="GrowBox" />
 
     <div class="card">
       <h2 class="dato">Datos del ambiente</h2>
@@ -64,6 +62,14 @@ def pagina_guev(nombre="GrowBox"):
       <input type="time" id="hora-on" />
       <label>Hora de apagado:</label>
       <input type="time" id="hora-off" />
+      <br/>
+      <button class="button primary" onclick="enviarHoras()">Guardar</button>
+    </div>
+
+    <div class="card">
+      <h2 class="dato">Cambiar Nombre</h2>
+      <label>Nombre del sistema:</label>
+      <input type="text" id="nombre" placeholder="GrowBox" />
       <br/>
       <button class="button primary" onclick="enviarHoras()">Guardar</button>
     </div>
