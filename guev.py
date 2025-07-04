@@ -63,7 +63,7 @@ def pagina_guev(nombre="GrowBox"):
       <label>Hora de apagado:</label>
       <input type="time" id="hora-off" />
       <br/>
-      <button class="button primary" onclick="enviarHoras()">Guardar</button>
+      <button class="button primary" onclick="guardarHoras()">Guardar Horas</button>
     </div>
 
     <div class="card">
@@ -71,7 +71,7 @@ def pagina_guev(nombre="GrowBox"):
       <label>Nombre del sistema:</label>
       <input type="text" id="nombre" placeholder="GrowBox" />
       <br/>
-      <button class="button primary" onclick="enviarHoras()">Guardar</button>
+      <button class="button primary" onclick="guardarNombre()">Guardar Nombre</button>
     </div>
 
     <div id="toast" style="
@@ -105,23 +105,39 @@ def pagina_guev(nombre="GrowBox"):
           }});
       }}
 
-      function enviarHoras() {{
+      function guardarHoras() {{
         const on = document.getElementById("hora-on").value;
         const off = document.getElementById("hora-off").value;
-        const nombre = document.getElementById("nombre").value;
-        if (!on || !off || !nombre) {{
-          toast("Completá todos los campos.");
+        if (!on || !off) {{
+          toast("Completá ambas horas.");
           return;
         }}
         fetch('/horas', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
-          body: JSON.stringify({{ encender: on, apagar: off, nombre: nombre }})
+          body: JSON.stringify({{ encender: on, apagar: off }})
+        }}).then(() => {{
+          toast("Horas guardadas correctamente");
+        }}).catch(() => {{
+          toast("Error al guardar horas", "tomato");
+        }});
+      }}
+
+      function guardarNombre() {{
+        const nombre = document.getElementById("nombre").value;
+        if (!nombre) {{
+          toast("Ingresá un nombre.");
+          return;
+        }}
+        fetch('/nombre', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ nombre: nombre }})
         }}).then(() => {{
           document.getElementById("nombre-growbox").innerText = nombre;
-          toast("Configuración guardada correctamente");
+          toast("Nombre actualizado");
         }}).catch(() => {{
-          toast("Error al guardar configuración");
+          toast("Error al actualizar nombre", "tomato");
         }});
       }}
 

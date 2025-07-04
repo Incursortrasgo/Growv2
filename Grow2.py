@@ -16,7 +16,7 @@ from utils import (
 
 # Pines
 pin_wifi_ok = machine.Pin(2, machine.Pin.OUT, machine.Pin.PULL_DOWN)
-gpio0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)  # Modo flashing si está bajo
+gpio0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)
 
 # Variables globales de configuración
 hora_on = None
@@ -24,9 +24,6 @@ hora_off = None
 nombre = "GrowBox"
 
 def controlar_rele(ahora, hora_on, hora_off):
-    """
-    Controla el pin de salida según la hora actual y configuración.
-    """
     if hora_on is not None and hora_off is not None:
         if hora_on < hora_off:
             encender = hora_on <= ahora < hora_off
@@ -35,19 +32,16 @@ def controlar_rele(ahora, hora_on, hora_off):
         pin_wifi_ok.value(1 if encender else 0)
 
 def iniciar_servidor():
-    """
-    Inicializa WiFi, servidor web y escucha las conexiones.
-    """
-    global hora_on, hora_off
+    global hora_on, hora_off, nombre
 
     print("Iniciando WiFi...")
     wlan = wifimgr.get_connection()
     if wlan is None:
         print("No se pudo conectar a la red WiFi.")
         while True:
-            pass  # Se queda en loop esperando intervención
+            pass
 
-    pin_wifi_ok.value(1)  # LED o relé test al inicio
+    pin_wifi_ok.value(1)
     time.sleep(1)
 
     print("Sincronizando hora con NTP...")
@@ -66,8 +60,6 @@ def iniciar_servidor():
     try:
         while True:
             temperatura, humedad = leer_sensor()
-
-            # Redondeamos valores si no son None
             temperatura = round(temperatura, 1) if temperatura is not None else "--"
             humedad = round(humedad, 1) if humedad is not None else "--"
 
@@ -76,7 +68,7 @@ def iniciar_servidor():
 
             conn, addr = sock.accept()
             hora_on, hora_off, nombre = manejar_peticion(
-            conn, addr, temperatura, humedad, hora_on, hora_off, nombre
+                conn, addr, temperatura, humedad, hora_on, hora_off, nombre
             )
 
     except Exception as e:

@@ -13,12 +13,14 @@ pin_wifi_ok = machine.Pin(2, machine.Pin.OUT, machine.Pin.PULL_DOWN)
 def hora_a_segundos(hora_str):
     try:
         h, m = map(int, hora_str.split(":"))
-        return h * 3600 + m * 60
+        if 0 <= h < 24 and 0 <= m < 60:
+            return h * 3600 + m * 60
     except:
-        return None
+        pass
+    return None
 
 def hora_actual_segundos():
-    t = time.localtime(time.time() - 3 * 3600)  # UTC-3
+    t = time.localtime(time.time() - 3 * 3600)
     return t[3] * 3600 + t[4] * 60
 
 def guardar_config(hora_on, hora_off, nombre):
@@ -67,19 +69,35 @@ def manejar_peticion(conn, addr, temperatura, humedad, hora_on, hora_off, nombre
 
         if 'POST /horas' in request_str:
             cuerpo = request_str.split("\r\n\r\n", 1)[1]
-            datos = ujson.loads(cuerpo)
+            try:
+                datos = ujson.loads(cuerpo)
+            except:
+                enviar_respuesta(conn, "text", "JSON inválido", "400 Bad Request")
+                return hora_on, hora_off, nombre
 
-            nueva_on = hora_a_segundos(datos.get("encender", ""))
-            nueva_off = hora_a_segundos(datos.get("apagar", ""))
+            nueva_on = hora_a_segundos(datos.get("encender", "00:00"))
+            nueva_off = hora_a_segundos(datos.get("apagar", "00:00"))
             nuevo_nombre = datos.get("nombre", nombre)
 
-            if (nueva_on is not None and 0 <= nueva_on < 86400 and
-                nueva_off is not None and 0 <= nueva_off < 86400):
+            if (nueva_on is not None and nueva_off is not None and
+                0 <= nueva_on < 86400 and 0 <= nueva_off < 86400):
                 guardar_config(nueva_on, nueva_off, nuevo_nombre)
                 enviar_respuesta(conn, "text", "OK")
                 return nueva_on, nueva_off, nuevo_nombre
             else:
                 enviar_respuesta(conn, "text", "Horas inválidas", "400 Bad Request")
+                return hora_on, hora_off, nombre
+
+        elif 'POST /nombre' in request_str:
+            cuerpo = request_str.split("\r\n\r\n", 1)[1]
+            try:
+                datos = ujson.loads(cuerpo)
+                nuevo_nombre = datos.get("nombre", nombre)
+                guardar_config(hora_on, hora_off, nuevo_nombre)
+                enviar_respuesta(conn, "text", "Nombre actualizado")
+                return hora_on, hora_off, nuevo_nombre
+            except:
+                enviar_respuesta(conn, "text", "Error en nombre", "400 Bad Request")
                 return hora_on, hora_off, nombre
 
         elif 'GET /datos' in request_str:
