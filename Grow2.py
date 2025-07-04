@@ -21,6 +21,7 @@ gpio0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)  # Modo flashing si 
 # Variables globales de configuración
 hora_on = None
 hora_off = None
+nombre = "GrowBox"
 
 def controlar_rele(ahora, hora_on, hora_off):
     """
@@ -55,7 +56,7 @@ def iniciar_servidor():
     except Exception as e:
         print("Error sincronizando NTP:", e)
 
-    hora_on, hora_off = cargar_config()
+    hora_on, hora_off, nombre = cargar_config()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(('', 80))
@@ -74,8 +75,8 @@ def iniciar_servidor():
             controlar_rele(ahora, hora_on, hora_off)
 
             conn, addr = sock.accept()
-            hora_on, hora_off = manejar_peticion(
-                conn, addr, temperatura, humedad, hora_on, hora_off
+            hora_on, hora_off, nombre = manejar_peticion(
+            conn, addr, temperatura, humedad, hora_on, hora_off, nombre
             )
 
     except Exception as e:
